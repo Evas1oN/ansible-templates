@@ -1,0 +1,2 @@
+[kiosk]
+1.1.1.1 browser=chromium url=example.com

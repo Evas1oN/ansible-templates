@@ -1,0 +1,45 @@
+---
+# tasks file for kiosk
+
+- name: Setup xorg
+  community.general.apk:
+    name: "xorg-server xf86-input-libinput eudev mesa-dri-gallium openbox xinit font-croscore xterm setxkbmap {{ browser }}"
+    update_cache: true
+  notify: Setup-udev
+
+- name: Create user
+  ansible.builtin.user:
+    name: "{{ user }}"
+    groups: video,input
+
+- name: Xinitrc config
+  ansible.builtin.copy:
+    dest: "/home/{{ user }}/.xinitrc"
+    content: "exec openbox-session"
+    owner: "{{ user }}"
+    mode: "0700"
+
+- name: Profile config
+  ansible.builtin.copy:
+    dest: "/home/{{ user }}/.profile"
+    content: "startx >> /dev/null"
+    owner: "{{ user }}"
+    mode: "0700"
+
+- name: Autologin
+  ansible.builtin.lineinfile:
+    dest: /etc/inittab
+    regexp: "tty1::respawn:.*"
+    line: "tty1::respawn:/bin/login -f {{ user }}"
+
+- name: Keymap
+  ansible.builtin.lineinfile:
+    dest: /etc/xdg/openbox/autostart
+    line: "setxkbmap -layout 'us,ru' -option 'grp:alt_shift_toggle' &"
+    regexp: "setxkbmap .*"
+
+- name: Openbox config
+  ansible.builtin.lineinfile:
+    dest: /etc/xdg/openbox/autostart
+    line: "{{ browser }} --kiosk {{ url }}"
+    regexp: "(chromium|firefox) --kiosk"

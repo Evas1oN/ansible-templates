@@ -1,0 +1,5 @@
+---
+# defaults file for kiosk
+browser: firefox
+user: kiosk
+url: "https://example.com"

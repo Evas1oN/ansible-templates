@@ -1,0 +1,7 @@
+---
+# handlers file for kiosk
+
+- name: Setup-udev
+  ansible.builtin.command:
+    cmd: setup-devd udev
+  changed_when: false
