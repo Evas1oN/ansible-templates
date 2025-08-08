@@ -41,5 +41,5 @@
 - name: Openbox config
   ansible.builtin.lineinfile:
     dest: /etc/xdg/openbox/autostart
-    line: "{{ browser }} --kiosk {{ url }}"
+    line: "{{ browser }} --kiosk \"{{ url }}\""
     regexp: "(chromium|firefox) --kiosk"
